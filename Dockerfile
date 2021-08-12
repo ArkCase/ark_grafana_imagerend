@@ -39,7 +39,7 @@ ARG ARCH="amd64"
 ARG OS="linux"
 ARG VER="3.0.1"
 ARG PKG="grafana-image-renderer"
-ARG NODE_SRC="https://rpm.nodesource.com/setup_16.x"
+ARG NODE_SRC="https://rpm.nodesource.com/setup_14.x"
 
 #
 # Some important labels
@@ -60,15 +60,9 @@ WORKDIR /usr/src/app
 RUN curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo
 RUN rpm --import https://dl.yarnpkg.com/rpm/pubkey.gpg
 RUN curl --silent --location "${NODE_SRC}" | bash -
-RUN yum -y update && yum -y install nodejs git yarn
-
-RUN \
-  echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories && \
-  echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories && \
-  echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
-  apk --no-cache upgrade && \
-  apk add --no-cache udev ttf-opensans unifont chromium ca-certificates dumb-init && \
-  rm -rf /tmp/*
+RUN yum -y update && yum -y install nodejs yarn epel-release open-sans-fonts udev
+RUN yum -y install chromium unifont unifont-fonts
+RUN rm -rf /tmp/*
 
 FROM base as build
 
