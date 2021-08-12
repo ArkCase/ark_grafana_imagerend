@@ -64,43 +64,80 @@ RUN yum -y update && yum -y install nodejs yarn epel-release open-sans-fonts ude
 RUN yum -y install chromium unifont unifont-fonts
 RUN rm -rf /tmp/*
 
+#
+# This one is for doing the actual build
+#
 FROM base as build
 
+#
+# Copy the sources
+#
 COPY --from=src /src ./
 
+#
+# Run the actual build
+#
 RUN yarn install --pure-lockfile
 RUN yarn run build
 
-EXPOSE 8081
-
+#
+# Final parameters
+#
+EXPOSE  8081
 CMD [ "yarn", "run", "dev" ]
 
+#
+# The actual running container
+#
 FROM base
 
-LABEL maintainer="Grafana team <hello@grafana.com>"
+#
+# Basic Parameters
+#
+ARG ARCH="amd64"
+ARG OS="linux"
+ARG VER="3.0.1"
+ARG PKG="grafana-image-renderer"
 
-ARG GF_UID="472"
-ARG GF_GID="472"
+#
+# Some important labels
+#
+LABEL ORG="Armedia LLC"
+LABEL MAINTAINER="Armedia Devops Team <devops@armedia.com>"
+LABEL APP="Grafana Image Renderer"
+LABEL VERSION="${VER}"
+
+#
+# Create the required user
+#
+RUN useradd --system --user-group "${UID}"
+
+#
+# Some important environment variables
+#
 ENV GF_PATHS_HOME="/usr/share/grafana"
+ENV NODE_ENV="production"
 
-WORKDIR $GF_PATHS_HOME
+WORKDIR "${GF_PATHS_HOME}"
 
-RUN addgroup -S -g $GF_GID grafana && \
-    adduser -S -u $GF_UID -G grafana grafana && \
-    mkdir -p "$GF_PATHS_HOME" && \
-    chown -R grafana:grafana "$GF_PATHS_HOME"
-
-ENV NODE_ENV=production
-
+#
+# Copy over the built artifacts
+#
 COPY --from=build /usr/src/app/node_modules node_modules
 COPY --from=build /usr/src/app/build build
 COPY --from=build /usr/src/app/proto proto
 COPY --from=build /usr/src/app/default.json config.json
 COPY --from=build /usr/src/app/plugin.json plugin.json
 
-EXPOSE 8081
+#
+# Set directory ownership
+#
+RUN chown -R "${UID}:" "${GF_PATHS_HOME}"
 
-USER grafana
-
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "build/app.js", "server", "--config=config.json"]
+#
+# Final parameters
+#
+USER        ${UID}
+EXPOSE      8081
+ENTRYPOINT  [ "/usr/local/bin/node", ]
+CMD         [ "build/app.js", "server", "--config=config.json" ]
