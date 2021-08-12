@@ -140,7 +140,6 @@ RUN chown -R "${UID}:" "${GF_PATHS_HOME}"
 #
 USER        ${UID}
 EXPOSE      8081
-ENTRYPOINT  [ "/usr/bin/node" ]
-CMD         [ "build/app.js", \
-              "server", \
+ENTRYPOINT  [ "/usr/bin/node", "build/app.js" ]
+CMD         [ "server", \
               "--config=config.json" ]
