@@ -98,6 +98,7 @@ ARG ARCH="amd64"
 ARG OS="linux"
 ARG VER="3.0.1"
 ARG PKG="grafana-image-renderer"
+ARG UID="grafana"
 
 #
 # Some important labels
