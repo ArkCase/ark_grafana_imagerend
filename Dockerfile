@@ -8,7 +8,7 @@ FROM 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_base:latest AS src
 #
 ARG ARCH="amd64"
 ARG OS="linux"
-ARG VER="3.0.1"
+ARG VER="3.4.0"
 ARG PKG="grafana-image-renderer"
 ARG SRC="https://github.com/grafana/grafana-image-renderer.git"
 
@@ -37,7 +37,7 @@ FROM 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_base:latest AS base
 #
 ARG ARCH="amd64"
 ARG OS="linux"
-ARG VER="3.0.1"
+ARG VER="3.4.0"
 ARG PKG="grafana-image-renderer"
 ARG NODE_SRC="https://rpm.nodesource.com/setup_14.x"
 
@@ -96,7 +96,7 @@ FROM base
 #
 ARG ARCH="amd64"
 ARG OS="linux"
-ARG VER="3.0.1"
+ARG VER="3.4.0"
 ARG PKG="grafana-image-renderer"
 ARG UID="472"
 
