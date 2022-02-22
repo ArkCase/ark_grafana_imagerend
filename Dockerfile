@@ -8,7 +8,7 @@ FROM 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_base:latest AS src
 #
 ARG ARCH="amd64"
 ARG OS="linux"
-ARG VER="3.0.1"
+ARG VER="3.4.0"
 ARG PKG="grafana-image-renderer"
 ARG SRC="https://github.com/grafana/grafana-image-renderer.git"
 
@@ -37,7 +37,7 @@ FROM 345280441424.dkr.ecr.ap-south-1.amazonaws.com/ark_base:latest AS base
 #
 ARG ARCH="amd64"
 ARG OS="linux"
-ARG VER="3.0.1"
+ARG VER="3.4.0"
 ARG PKG="grafana-image-renderer"
 ARG NODE_SRC="https://rpm.nodesource.com/setup_14.x"
 
@@ -96,9 +96,9 @@ FROM base
 #
 ARG ARCH="amd64"
 ARG OS="linux"
-ARG VER="3.0.1"
+ARG VER="3.4.0"
 ARG PKG="grafana-image-renderer"
-ARG UID="grafana"
+ARG UID="472"
 
 #
 # Some important labels
@@ -111,7 +111,7 @@ LABEL VERSION="${VER}"
 #
 # Create the required user
 #
-RUN useradd --system --user-group "${UID}"
+RUN useradd --system --uid ${UID} --user-group grafana
 
 #
 # Some important environment variables
@@ -133,12 +133,12 @@ COPY --from=build /usr/src/app/plugin.json plugin.json
 #
 # Set directory ownership
 #
-RUN chown -R "${UID}:" "${GF_PATHS_HOME}"
+RUN chown -R grafana: "${GF_PATHS_HOME}"
 
 #
 # Final parameters
 #
-USER        ${UID}
+USER        grafana
 EXPOSE      8081
 ENTRYPOINT  [ "/usr/bin/node", "build/app.js" ]
 CMD         [ "server", "--config=config.json" ]
